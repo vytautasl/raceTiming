@@ -1,0 +1,22 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head />
+<body>
+<h:form id="generalForm" style="width:50%">
+<p:panel header="New session">
+    <p:panelGrid columns="2">
+        <p:outputLabel>Active</p:outputLabel>
+        <p:selectBooleanCheckbox value="#{sessionBean.active}"></p:selectBooleanCheckbox>
+        <p:outputLabel>Session name</p:outputLabel>
+        <p:inputText id="sessionName" value="#{sessionBean.name}"/>
+        <h:outputText value="Date and Time" />
+        <p:calendar id="executionDate" value="#{sessionBean.executionDate}"  timeZone="GMT+2" pattern="yyyy-MM-dd HH:mm" />
+        <h:outputText value="Lap limit" />
+        <p:inputText id="lapLimit" value="#{sessionBean.lapLimit}"/>
+        <h:outputText value="Time limit" />
+        <p:inputText id="timeLimit" value="#{sessionBean.timeLimit}"/>
+    </p:panelGrid>
+    <p:commandButton update="growl" actionListener="#{sessionBean.add}" value="Save" ajax="false"></p:commandButton>
+</p:panel>
+</h:form>
+</body>
+</html>
