@@ -3,6 +3,7 @@ package lt.agmis.raceLive.serviceimpl;
 import lt.agmis.raceLive.dao.AppUserDao;
 import lt.agmis.raceLive.domain.AppUser;
 import lt.agmis.raceLive.dto.CreateResult;
+import lt.agmis.raceLive.dto.PublicUsernamesDto;
 import lt.agmis.raceLive.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,20 +34,18 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public CreateResult login(AppUser appUser) {
-        AppUser result = appUserDao.login(appUser);
-        CreateResult response = new CreateResult();
-        if (result!=null)
-        {
-            response.setSuccess(true);
-            response.setDescription("Welcome " + appUser.getUserName());
-            response.setId(result.getId());
-        } else {
-            response.setSuccess(false);
-            response.setDescription("User not found");
-        }
+    public AppUser getUserByPublicId(String userPublicId) {
+        return appUserDao.getUserByPublicId(userPublicId);
+    }
 
-        return response;
+    @Override
+    public PublicUsernamesDto getPublicIdsLike(String criteria) {
+        return appUserDao.getPublicUserNamesLike(criteria);
+    }
+
+    @Override
+    public AppUser login(AppUser appUser) {
+        return appUserDao.login(appUser);
     }
 
 }

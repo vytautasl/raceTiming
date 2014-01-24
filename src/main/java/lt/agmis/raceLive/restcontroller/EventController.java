@@ -36,8 +36,19 @@ public class EventController implements Serializable {
     @RequestMapping(value = "/get/{userId}", produces = {"application/json"}, method = RequestMethod.GET)
     @ResponseBody
     public RaceEventListDto getEvents(@PathVariable Integer userId) {
-        RaceEventListDto raceEventListDto = raceService.getEvents(userId);
-        return raceEventListDto;
+        return raceService.getEvents(userId);
+    }
+
+    @RequestMapping(value = "/getById/{id}", produces = {"application/json"}, method = RequestMethod.GET)
+    @ResponseBody
+    public RaceEvent getEvent(@PathVariable Integer id) {
+        return raceService.getEvent(id);
+    }
+
+    @RequestMapping(value = "/getMy/{userId}", produces = {"application/json"}, method = RequestMethod.GET)
+    @ResponseBody
+    public RaceEventListDto getMyEvents(@PathVariable Integer userId) {
+        return raceService.getMyEvents(userId);
     }
 
 }

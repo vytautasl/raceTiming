@@ -27,4 +27,16 @@ public class RaceEventDaoImpl implements RaceEventDao {
         sessionFactory.getCurrentSession().saveOrUpdate(raceEvent);
         return raceEvent.getId();
     }
+
+    @Override
+    public RaceEventListDto getMyRaceEventList(AppUser appUser) {
+        RaceEventListDto raceEventListDto = new RaceEventListDto();
+        raceEventListDto.setRaceEventList((List<RaceEvent>)sessionFactory.getCurrentSession().createQuery("from RaceEvent re where re.id in (select s.eventId from RaceSession s where s.id in (select su.sessionId from SessionUser su where su.deviceUserName='"+appUser.getPublicId()+"'))").list());
+        return raceEventListDto;
+    }
+
+    @Override
+    public RaceEvent getRaceEvent(Integer id) {
+        return (RaceEvent)sessionFactory.getCurrentSession().createQuery("from RaceEvent re where re.id="+id).uniqueResult();
+    }
 }

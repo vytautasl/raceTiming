@@ -34,6 +34,7 @@
     <orderEntry type="library" name="primefaces-4.0-javadoc" level="application" />
     <orderEntry type="library" name="jsf-2.2.1" level="project" />
     <orderEntry type="library" name="commons-io-2" level="application" />
+    <orderEntry type="library" name="all-themes-1.0.10" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-webmvc:3.2.3.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-beans:3.2.3.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-core:3.2.3.RELEASE" level="project" />
@@ -134,7 +135,6 @@
     <orderEntry type="library" name="Maven: com.sun.faces:jsf-impl:2.0.3" level="project" />
     <orderEntry type="library" name="Maven: javax.servlet:jstl:1.2" level="project" />
     <orderEntry type="library" name="Maven: org.primefaces:primefaces:4.0" level="project" />
-    <orderEntry type="library" name="all-themes-1.0.10" level="project" />
   </component>
   <component name="com.intellij.jsf.UserDefinedFacesConfigs">
     <option name="USER_DEFINED_CONFIGS">

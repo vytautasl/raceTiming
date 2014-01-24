@@ -48,7 +48,7 @@ public class RaceSessionDaoImpl implements RaceSessionDao {
                                         " d.id in (select deviceId from checkpoint c1 where c1.sessionId="+sessionId+" group by c1.deviceId) and "+
                                         " d.id not in (select deviceId from session_user su1 where su1.sessionId="+sessionId+" group by su1.deviceId) "+
                            " union all " +
-                           " select su.id as sessionUserId, su.deviceId as deviceId, su.sessionDisplayName as displayName, d.defaultNumber as defaultNumber, su.sessionDisplayKart as displayNumber, su.deviceUserId as deviceUser, au.email as deviceUserName, d.serialNumber as deviceSerialNumber, su.sessionDisplayKart as kartNumber from session_user su left outer join app_user au on au.id=su.deviceUserId left outer join device d on d.id=su.deviceId where su.sessionId="+sessionId
+                           " select su.id as sessionUserId, su.deviceId as deviceId, su.sessionDisplayName as displayName, d.defaultNumber as defaultNumber, su.sessionDisplayKart as displayNumber, su.deviceUserId as deviceUser, su.deviceUserName as deviceUserName, d.serialNumber as deviceSerialNumber, su.sessionDisplayKart as kartNumber from session_user su left outer join app_user au on au.id=su.deviceUserId left outer join device d on d.id=su.deviceId where su.sessionId="+sessionId
                 ;
         ArrayList<HashMap> result = (ArrayList<HashMap>)sessionFactory.getCurrentSession().createSQLQuery(sqlQuery).setResultTransformer(Transformers.ALIAS_TO_ENTITY_MAP).list();
         ParticipantsDto participantsDto = new ParticipantsDto();

@@ -1,45 +1,58 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" xmlns:ui="http://java.sun.com/jsf/facelets">
-<h:head />
+<h:head>
+</h:head>
 <body>
-<h:form id="generalForm" style="width:50%">
-    <p:growl id="growl" showDetail="true" sticky="true" />
+    <p:layout fullPage="true">
+        <p:layoutUnit position="west" size="250">
+            <ui:include src="menu.xhtml"/>
+        </p:layoutUnit>
 
-    <p:panel header="Events">
-        <p:dataTable id="eventTbl" var="event" value="#{eventBean.eventList}" paginator="true" rows="10" rowKey="#{event.id}" editable="true">
-            <p:ajax event="rowEdit" update="@this" listener="#{eventBean.updateRow}"/>
+        <p:layoutUnit position="center">
+            <h:form id="generalForm" style="width:50%">
+                <p:growl id="growl" showDetail="true" sticky="true" />
 
-            <p:column headerText="Name">
-                <p:cellEditor>
-                    <f:facet name="output"><h:outputText value="#{event.raceName}"/></f:facet>
-                    <f:facet name="input"><h:inputText value="#{event.raceName}"/></f:facet>
-                </p:cellEditor>
-            </p:column>
+                <p:panel header="Events">
+                    <p:dataTable id="eventTbl" var="event" value="#{eventBean.eventList}" paginator="true" rows="10" rowKey="#{event.id}" editable="true">
+                        <p:ajax event="rowEdit" update="@this" listener="#{eventBean.updateRow}"/>
 
-            <p:column headerText="Begin date">
-                <p:cellEditor>
-                    <f:facet name="output"><h:outputText value="#{event.beginDate}"><f:convertDateTime  timeZone="GMT+2" pattern="yyyy-MM-dd HH:mm" /></h:outputText></f:facet>
-                    <f:facet name="input"><p:calendar id="eventBeginDate" value="#{event.beginDate}" timeZone="GMT+2" pattern="yyyy-MM-dd HH:mm" /></f:facet>
-                </p:cellEditor>
-            </p:column>
+                        <p:column headerText="Name">
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{event.raceName}"/></f:facet>
+                                <f:facet name="input"><h:inputText value="#{event.raceName}"/></f:facet>
+                            </p:cellEditor>
+                        </p:column>
 
-            <p:column headerText="End date">
-                <p:cellEditor>
-                    <f:facet name="output"><h:outputText value="#{event.endDate}"><f:convertDateTime  timeZone="GMT+2" pattern="yyyy-MM-dd HH:mm" /></h:outputText></f:facet>
-                    <f:facet name="input"><p:calendar id="eventEndDate" value="#{event.endDate}"  timeZone="GMT+2" pattern="yyyy-MM-dd HH:mm" /></f:facet>
-                </p:cellEditor>
-            </p:column>
+                        <p:column headerText="Begin date">
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{event.beginDate}"><f:convertDateTime  timeZone="GMT+2" pattern="yyyy-MM-dd HH:mm" /></h:outputText></f:facet>
+                                <f:facet name="input"><p:calendar id="eventBeginDate" value="#{event.beginDate}" timeZone="GMT+2" pattern="yyyy-MM-dd HH:mm" /></f:facet>
+                            </p:cellEditor>
+                        </p:column>
 
-            <p:column headerText="Edit">
-                <p:rowEditor/>
-            </p:column>
+                        <p:column headerText="End date">
+                            <p:cellEditor>
+                                <f:facet name="output"><h:outputText value="#{event.endDate}"><f:convertDateTime  timeZone="GMT+2" pattern="yyyy-MM-dd HH:mm" /></h:outputText></f:facet>
+                                <f:facet name="input"><p:calendar id="eventEndDate" value="#{event.endDate}"  timeZone="GMT+2" pattern="yyyy-MM-dd HH:mm" /></f:facet>
+                            </p:cellEditor>
+                        </p:column>
 
-            <p:column headerText="Sessions">
-                <p:commandButton id="sessionsLink" icon="ui-icon-script" action="#{eventBean.showSessions(event.id)}" ajax="false" update="sessionTbl" />
-            </p:column>
+                        <p:column headerText="Edit">
+                            <p:rowEditor/>
+                        </p:column>
 
-        </p:dataTable>
-        <p:commandButton update="growl" actionListener="#{eventBean.newEvent}" value="New event" ajax="false"></p:commandButton>
-    </p:panel>
-    </h:form>
+                        <p:column headerText="Sessions">
+                            <p:commandButton id="sessionsLink" icon="ui-icon-script" action="#{eventBean.showSessions(event.id)}" ajax="false" update="sessionTbl" />
+                        </p:column>
+
+                    </p:dataTable>
+                    <p:commandButton update="growl" actionListener="#{eventBean.newEvent}" value="New event" ajax="false"/>
+                </p:panel>
+            </h:form>
+
+        </p:layoutUnit>
+        <p:layoutUnit position="south">
+            <p:outputLabel value="#{userBean.copyright}"/>
+        </p:layoutUnit>
+    </p:layout>
 </body>
 </html>

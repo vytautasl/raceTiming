@@ -1,6 +1,7 @@
 package lt.agmis.raceLive.faces;
 
 import lt.agmis.raceLive.domain.AppUser;
+import lt.agmis.raceLive.domain.RaceEvent;
 import lt.agmis.raceLive.domain.RaceSession;
 import lt.agmis.raceLive.dto.*;
 import lt.agmis.raceLive.faces.utils.CallUtils;
@@ -26,22 +27,37 @@ public class ResultsBean {
     String selectedLap="999";
     String refreshRate="10";
     RaceSession raceSession;
+    RaceEvent raceEvent;
     String sessionStatusMsg;
     String sessionStatus;
     String duration;
     Integer sessionId;
     ParticipantsDto participantsDto;
+    boolean owner;
+
+    public void setOwner(boolean owner) {
+        this.owner = owner;
+    }
+
+    public boolean isOwner()
+    {
+        AppUser appUser = Messages.getAppUser();
+        if ((getRaceEvent()==null)||(getRaceEvent().getId()!=Messages.getSessionAttribute("race-event-id")))
+        {
+            setRaceEvent((RaceEvent) CallUtils.getCall("event/getById/" + Messages.getSessionAttribute("race-event-id"), RaceEvent.class, new HashMap()));
+        }
+        return appUser.getId().equals(getRaceEvent().getRaceOwner());
+    }
 
     public void loadParticipants()
     {
-        Integer sessionId = (Integer)Messages.getSessionAttribute("race-session-id");
         setParticipantsDto((ParticipantsDto) CallUtils.getCall("session/getParticipants/" + sessionId, ParticipantsDto.class, new HashMap()));
     }
 
     public void saveParticipants()
     {
         Integer sessionId = (Integer)Messages.getSessionAttribute("race-session-id");
-        CreateResult result = (CreateResult)CallUtils.postCall("session/setParticipants/"+sessionId, getParticipantsDto(), CreateResult.class, new HashMap());
+        CallUtils.postCall("session/setParticipants/"+sessionId, getParticipantsDto(), CreateResult.class, new HashMap());
         refreshBestLaps();
     }
 
@@ -75,7 +91,9 @@ public class ResultsBean {
     }
 
     public void refreshBestLaps() {
-        Integer sessionId = (Integer)Messages.getSessionAttribute("race-session-id");
+        setRaceSession((RaceSession)Messages.getSessionAttribute("race-session"));
+        setSessionId(getRaceSession().getId());
+
         loadParticipants();
         String lapLimit = getSelectedLap();
         if ((lapLimit==null)||(getLapList()==null)||(String.valueOf(getLapList().size()).equals(getSelectedLap())))
@@ -83,45 +101,42 @@ public class ResultsBean {
             lapLimit = "9999";
         }
 
-        RaceSession rsResult = (RaceSession)CallUtils.getCall("session/getById/"+sessionId, RaceSession.class, new HashMap());
-        setRaceSession(rsResult);
-
-        if (rsResult!=null)
+        if (getRaceSession()!=null)
         {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            if (rsResult.getExecutionDate().compareTo(new Date())>0)
+            if (getRaceSession().getExecutionDate().compareTo(new Date())>0)
             {
-                setSessionStatusMsg("Session has not started yet. It will start at " + sdf.format(rsResult.getExecutionDate()));
+                setSessionStatusMsg("Session has not started yet. It will start at " + sdf.format(getRaceSession().getExecutionDate()));
             }
-            else if ((rsResult.getEndDate()==null)||(rsResult.getEndDate().compareTo(new Date())>0))
+            else if ((getRaceSession().getEndDate()==null)||(getRaceSession().getEndDate().compareTo(new Date())>0))
             {
                 Date now = new Date();
-                setDuration(formatDuration(now.getTime()-rsResult.getExecutionDate().getTime()));
-                setSessionStatusMsg("Session is running "+getDuration()+". Started at: " + sdf.format(rsResult.getExecutionDate()));
+                setDuration(formatDuration(now.getTime()-getRaceSession().getExecutionDate().getTime()));
+                setSessionStatusMsg("Session is running "+getDuration()+". Started at: " + sdf.format(getRaceSession().getExecutionDate()));
             } else {
-                setDuration(formatDuration(rsResult.getEndDate().getTime()-rsResult.getExecutionDate().getTime()));
-                setSessionStatusMsg("Session has ended at: " + sdf.format(rsResult.getEndDate()) + ". Lasted " + getDuration());
+                setDuration(formatDuration(getRaceSession().getEndDate().getTime()-getRaceSession().getExecutionDate().getTime()));
+                setSessionStatusMsg("Session has ended at: " + sdf.format(getRaceSession().getEndDate()) + ". Lasted " + getDuration());
             }
-        }
 
+            BestLapsDto result = (BestLapsDto)CallUtils.getCall("results/getFinalBestLaps/"+getRaceSession().getId()+"/"+lapLimit, BestLapsDto.class, new HashMap());
+            bestLapsDto = result.getBestLapRowDtoList();
 
-        BestLapsDto result = (BestLapsDto)CallUtils.getCall("results/getFinalBestLaps/"+sessionId+"/"+lapLimit, BestLapsDto.class, new HashMap());
-        bestLapsDto = result.getBestLapRowDtoList();
+            result = (BestLapsDto)CallUtils.getCall("results/getFinalRaceResults/"+getRaceSession().getId()+"/"+lapLimit, BestLapsDto.class, new HashMap());
+            raceResultsDto = result.getBestLapRowDtoList();
 
-        result = (BestLapsDto)CallUtils.getCall("results/getFinalRaceResults/"+sessionId+"/"+lapLimit, BestLapsDto.class, new HashMap());
-        raceResultsDto = result.getBestLapRowDtoList();
-
-        if (raceResultsDto.size()>0)
-        {
-            BestLapRowDto bestLapRow = raceResultsDto.get(0);
-            if (getLapList()!=null)
+            if (raceResultsDto.size()>0)
             {
-                if (getLapList().size()!=bestLapRow.getTotalLaps())
+                BestLapRowDto bestLapRow = raceResultsDto.get(0);
+                if (getLapList()!=null)
                 {
-                    generateLapList(bestLapRow.getTotalLaps());
+                    if (getLapList().size()!=bestLapRow.getTotalLaps())
+                    {
+                        generateLapList(bestLapRow.getTotalLaps());
+                    }
                 }
             }
         }
+
     }
 
     public void setBestLapsDto(List<BestLapRowDto> bestLapsDto) {
@@ -129,6 +144,12 @@ public class ResultsBean {
     }
 
     public List<BestLapRowDto> getRaceResultsDto() {
+        Integer sessionId = (Integer)Messages.getSessionAttribute("race-session-id");
+        if (getSessionId()!=sessionId)
+        {
+            setSessionId(sessionId);
+            refreshBestLaps();
+        }
         return raceResultsDto;
     }
 
@@ -137,6 +158,12 @@ public class ResultsBean {
     }
 
     public List<String> getLapList() {
+        Integer sessionId = (Integer)Messages.getSessionAttribute("race-session-id");
+        if (getSessionId()!=sessionId)
+        {
+            setSessionId(sessionId);
+            refreshBestLaps();
+        }
         return lapList;
     }
 
@@ -167,7 +194,7 @@ public class ResultsBean {
     }
 
     public RaceSession getRaceSession() {
-        return raceSession;
+        return (RaceSession)Messages.getSessionAttribute("race-session");
     }
 
     public void setRaceSession(RaceSession raceSession) {
@@ -195,6 +222,17 @@ public class ResultsBean {
         raceSession.setEndDate(new Date());
         CreateResult result = (CreateResult)CallUtils.postCall("session/add/", raceSession, CreateResult.class, new HashMap());
         refreshBestLaps();
+    }
+
+    public void navigateToMySessions()
+    {
+        try {
+            Messages.setSessionAttribute("race-session-id", null);
+            participantsDto = new ParticipantsDto();
+            FacesContext.getCurrentInstance().getExternalContext().redirect("mySessions.xhtml");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void navigateToSessions()
@@ -238,5 +276,24 @@ public class ResultsBean {
 
     public void setParticipantsDto(ParticipantsDto participantsDto) {
         this.participantsDto = participantsDto;
+    }
+
+    public List<String> complete(String query) {
+        List<String> results = new ArrayList<String>();
+
+        PublicUsernamesDto userNames = (PublicUsernamesDto)CallUtils.getCall("user/publicIDs/"+query, PublicUsernamesDto.class, new HashMap());
+        if (userNames!=null)
+        {
+            results = userNames.getUserNames();
+        }
+        return results;
+    }
+
+    public RaceEvent getRaceEvent() {
+        return raceEvent;
+    }
+
+    public void setRaceEvent(RaceEvent raceEvent) {
+        this.raceEvent = raceEvent;
     }
 }

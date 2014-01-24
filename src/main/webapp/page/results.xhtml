@@ -2,123 +2,130 @@
 <h:head>
 </h:head>
 <body>
-<h:form id="generalForm" style="width:50%" >
-    <p:poll widgetVar="pollHandle" id="poll" interval="#{resultsBean.refreshRate}" listener="#{resultsBean.refreshBestLaps}" update=":generalForm:raceTbl :generalForm:qualTbl :generalForm:lapList :generalForm:rsStarted" />
+    <p:layout fullPage="true">
+        <p:layoutUnit position="west" size="250">
+            <ui:include src="menu.xhtml"/>
+        </p:layoutUnit>
 
-    <p:panel id="settings" toggleable="true" collapsed="true" header="Settings">
-        <table style="width:100%">
-            <tr>
-                <td>
-                    <p:outputLabel id="rrOutput" value="Refresh rate #{resultsBean.refreshRate} sec."/>
-                    <h:inputHidden id="rrInput" value="#{resultsBean.refreshRate}" />
-                    <p:slider widgetVar="inputHandle" for="rrInput" display="rrOutput" style="width:300px" displayTemplate="Refresh rate {value} sec." minValue="3" maxValue="30" onSlideEnd="PF('pollHandle').cfg.frequency=PF('inputHandle').getValue(); PF('pollHandle').stop(); PF('pollHandle').start()" />
-                </td>
-                <td>
-                    <p:outputLabel id="rsStarted" value="#{resultsBean.sessionStatusMsg}" /><br/>
-                    <p:commandButton update=":generalForm:raceTbl :generalForm:qualTbl" actionListener="#{resultsBean.restartSession}" value="Start session" />
-                    <p:commandButton update=":generalForm:raceTbl :generalForm:qualTbl" actionListener="#{resultsBean.stopSession}" value="Stop session"/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <p:dataGrid id="lapList" var="resultRow" value="#{resultsBean.lapList}" columns="5" rows="99">
-                        <p:commandButton update=":generalForm:raceTbl :generalForm:qualTbl" actionListener="#{resultsBean.changeSelectedLap(resultRow)}" value="#{resultRow=='999'?'Last lap':resultRow}" icon="#{resultRow==resultsBean.selectedLap?'ui-icon-check':''}"/>
+        <p:layoutUnit position="center">
+            <h:form id="generalForm" style="width:50%" >
+                <p:poll widgetVar="pollHandle" id="poll" interval="#{resultsBean.refreshRate}" listener="#{resultsBean.refreshBestLaps}" update=":generalForm:raceTbl :generalForm:qualTbl :generalForm:lapList :generalForm:rsStarted" />
+
+                <p:panel id="settings" toggleable="true" collapsed="true" header="Settings" rendered="#{resultsBean.owner}">
+                    <table style="width:100%">
+                        <tr>
+                            <td>
+                                <p:outputLabel id="rrOutput" value="Refresh rate #{resultsBean.refreshRate} sec."/>
+                                <h:inputHidden id="rrInput" value="#{resultsBean.refreshRate}" />
+                                <p:slider widgetVar="inputHandle" for="rrInput" display="rrOutput" style="width:300px" displayTemplate="Refresh rate {value} sec." minValue="3" maxValue="30" onSlideEnd="PF('pollHandle').cfg.frequency=PF('inputHandle').getValue(); PF('pollHandle').stop(); PF('pollHandle').start()" />
+                            </td>
+                            <td>
+                                <p:outputLabel id="rsStarted" value="#{resultsBean.sessionStatusMsg}" /><br/>
+                                <p:commandButton update=":generalForm:raceTbl :generalForm:qualTbl" actionListener="#{resultsBean.restartSession}" value="Start session" />
+                                <p:commandButton update=":generalForm:raceTbl :generalForm:qualTbl" actionListener="#{resultsBean.stopSession}" value="Stop session"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <p:dataTable id="participantsTbl" var="participant" value="#{resultsBean.participantsDto.participants}" rowKey="participant.deviceSerialNumber">
+                                    <p:column id="ParticipantDevice" headerText="Serial#">
+                                        <p:outputLabel value="#{participant.deviceSerialNumber}"/>
+                                    </p:column>
+                                    <p:column id="ParticipantDefaultKartNo" headerText="Default Kart#">
+                                        <p:outputLabel value="#{participant.deviceDefaultKartNumber}"/>
+                                    </p:column>
+                                    <p:column id="ParticipantName" headerText="Name">
+                                        <p:inputText value="#{participant.sessionDisplayName}"/>
+                                    </p:column>
+                                    <p:column id="ParticipantKart" headerText="Kart#">
+                                        <p:inputText value="#{participant.sessionDisplayKart}"/>
+                                    </p:column>
+                                    <p:column id="ParticipantId" headerText="Participant ID">
+                                        <p:autoComplete id="acMaxResults" maxResults="5"
+                                                        value="#{participant.deviceUserName}"
+                                                        completeMethod="#{resultsBean.complete}"/>
+                                    </p:column>
+                                </p:dataTable>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p:commandButton value="Save" icon="ui-icon-disk" action="#{resultsBean.saveParticipants}" update="participantsTbl raceTbl qualTbl"/>
+                            </td>
+                            <td>
+                                <p:commandButton value="Load" icon="ui-icon-disk" action="#{resultsBean.loadParticipants}" update="participantsTbl"/>
+                            </td>
+                        </tr>
+                    </table>
+                </p:panel>
+                <p:panel>
+                    <p:dataGrid id="lapList" var="resultRow" value="#{resultsBean.lapList}" columns="10" rows="99">
+                        <p:commandButton update=":generalForm:raceTbl :generalForm:qualTbl :generalForm:lapList" actionListener="#{resultsBean.changeSelectedLap(resultRow)}" value="#{resultRow=='999'?'Last lap':resultRow}" icon="#{resultRow==resultsBean.selectedLap?'ui-icon-check':''}"/>
                     </p:dataGrid>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <p:dataTable id="participantsTbl" var="participant" value="#{resultsBean.participantsDto.participants}" rowKey="participant.deviceSerialNumber">
-                        <p:column id="ParticipantDevice" headerText="Serial#">
-                            <p:outputLabel value="#{participant.deviceSerialNumber}"/>
+                </p:panel>
+                <p:panel id="qual" header="#{resultsBean.raceSession.name}. Practice results" toggleable="true" rendered="#{resultsBean.raceSession.sessionType==1}">
+                    <p:dataTable id="qualTbl" var="res" value="#{resultsBean.bestLapsDto}" rowKey="res.position">
+                        <p:column id="PRposition" headerText="Pos">
+                            <p:outputLabel value="#{res.position}"/>
                         </p:column>
-                        <p:column id="ParticipantDefaultKartNo" headerText="Default Kart#">
-                            <p:outputLabel value="#{participant.deviceDefaultKartNumber}"/>
+                        <p:column id="PRKart" headerText="Kart#">
+                            <p:outputLabel value="#{res.kartNumber}"/>
                         </p:column>
-                        <p:column id="ParticipantName" headerText="Name">
-                            <p:inputText value="#{participant.sessionDisplayName}"/>
+                        <p:column id="PRName" headerText="Name">
+                            <p:outputLabel value="#{res.kartName}"/>
                         </p:column>
-                        <p:column id="ParticipantKart" headerText="Kart#">
-                            <p:inputText value="#{participant.sessionDisplayKart}"/>
+                        <p:column id="PRBestlap"  headerText="BestLap">
+                            <p:outputLabel value="#{res.bestLapStr}"/>
                         </p:column>
-                        <p:column id="ParticipantId" headerText="Participant ID">
-                            <p:inputText value="#{participant.deviceUserName}"/>
+                        <p:column id="PRGapTotal" headerText="Total gap">
+                            <p:outputLabel value="#{res.gapTotal}"/>
+                        </p:column>
+                        <p:column id="PRGap" headerText="Gap from better">
+                            <p:outputLabel value="#{res.gap}"/>
+                        </p:column>
+                        <p:column id="PRinLap" headerText="In Lap">
+                            <p:outputLabel value="#{res.bestLapInLap}"/>
+                        </p:column>
+                        <p:column id="PRtotalLaps" headerText="Laps">
+                            <p:outputLabel value="#{res.totalLaps}"/>
                         </p:column>
                     </p:dataTable>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <p:commandButton value="Save" icon="ui-icon-disk" action="#{resultsBean.saveParticipants}" update="participantsTbl raceTbl qualTbl"/>
-                </td>
-                <td>
-                    <p:commandButton value="Load" icon="ui-icon-disk" action="#{resultsBean.saveParticipants}" update="participantsTbl"/>
-                </td>
-            </tr>
-        </table>
-    </p:panel>
-    <p:panel id="qual" header="Practice results" toggleable="true">
-        <p:dataTable id="qualTbl" var="res" value="#{resultsBean.bestLapsDto}" rowKey="res.position">
-            <p:column id="PRposition" headerText="Pos">
-                <p:outputLabel value="#{res.position}"/>
-            </p:column>
-            <p:column id="PRKart" headerText="Kart#">
-                <p:outputLabel value="#{res.kartNumber}"/>
-            </p:column>
-            <p:column id="PRName" headerText="Name">
-                <p:outputLabel value="#{res.kartName}"/>
-            </p:column>
-            <p:column id="PRBestlap"  headerText="BestLap">
-                <p:outputLabel value="#{res.bestLapStr}"/>
-            </p:column>
-            <p:column id="PRGapTotal" headerText="Total gap">
-                <p:outputLabel value="#{res.gapTotal}"/>
-            </p:column>
-            <p:column id="PRGap" headerText="Gap from better">
-                <p:outputLabel value="#{res.gap}"/>
-            </p:column>
-            <p:column id="PRinLap" headerText="In Lap">
-                <p:outputLabel value="#{res.bestLapInLap}"/>
-            </p:column>
-            <p:column id="PRtotalLaps" headerText="Laps">
-                <p:outputLabel value="#{res.totalLaps}"/>
-            </p:column>
-        </p:dataTable>
-        <p:commandButton value="Print" icon="ui-icon-print">
-            <p:printer target="qual" />
-        </p:commandButton>
-    </p:panel>
+                    <p:commandButton value="Print" icon="ui-icon-print">
+                        <p:printer target="qual" />
+                    </p:commandButton>
+                </p:panel>
 
-    <p:panel id="race" toggleable="true">
-        <f:facet name="header" >
-            <p:outputLabel value="Race results"/>
-        </f:facet>
-
-        <p:dataTable id="raceTbl" var="rac" value="#{resultsBean.raceResultsDto}" rowKey="rac.position">
-            <p:column id="RRposition" headerText="Pos">
-                <p:outputLabel value="#{rac.racePos}"/>
-            </p:column>
-            <p:column id="RRKart" headerText="Kart#">
-                <p:outputLabel value="#{rac.kartNumber}"/>
-            </p:column>
-            <p:column id="RRName" headerText="Name">
-                <p:outputLabel value="#{rac.kartName}"/>
-            </p:column>
-            <p:column id="RRtotalLaps" headerText="Laps">
-                <p:outputLabel value="#{rac.totalLaps}"/>
-            </p:column>
-            <p:column id="RRgapTotal" headerText="Total Gap">
-                <p:outputLabel value="#{rac.raceGapTotal}"/>
-            </p:column>
-            <p:column id="RRgap" headerText="Gap">
-                <p:outputLabel value="#{rac.raceGap}"/>
-            </p:column>
-        </p:dataTable>
-        <p:commandButton value="Print" icon="ui-icon-print">
-            <p:printer target="race" />
-        </p:commandButton>
-    </p:panel>
-    <p:commandButton id="sessionsLink" value="Back To Sessions"  action="#{resultsBean.navigateToSessions}" ajax="false" />
-</h:form>
+                <p:panel id="race" header="#{resultsBean.raceSession.name}. Race results" toggleable="true" rendered="#{resultsBean.raceSession.sessionType==2}">
+                    <p:dataTable id="raceTbl" var="rac" value="#{resultsBean.raceResultsDto}" rowKey="rac.position">
+                        <p:column id="RRposition" headerText="Pos">
+                            <p:outputLabel value="#{rac.racePos}"/>
+                        </p:column>
+                        <p:column id="RRKart" headerText="Kart#">
+                            <p:outputLabel value="#{rac.kartNumber}"/>
+                        </p:column>
+                        <p:column id="RRName" headerText="Name">
+                            <p:outputLabel value="#{rac.kartName}"/>
+                        </p:column>
+                        <p:column id="RRtotalLaps" headerText="Laps">
+                            <p:outputLabel value="#{rac.totalLaps}"/>
+                        </p:column>
+                        <p:column id="RRgapTotal" headerText="Total Gap">
+                            <p:outputLabel value="#{rac.raceGapTotal}"/>
+                        </p:column>
+                        <p:column id="RRgap" headerText="Gap">
+                            <p:outputLabel value="#{rac.raceGap}"/>
+                        </p:column>
+                    </p:dataTable>
+                    <p:commandButton value="Print" icon="ui-icon-print">
+                        <p:printer target="race" />
+                    </p:commandButton>
+                </p:panel>
+                <p:commandButton id="sessionsLink" value="Back To Sessions"  action="#{resultsBean.navigateToSessions}" ajax="false" />
+            </h:form>
+        </p:layoutUnit>
+        <p:layoutUnit position="south">
+            <p:outputLabel value="#{userBean.copyright}" />
+        </p:layoutUnit>
+    </p:layout>
 </body>
 </html>

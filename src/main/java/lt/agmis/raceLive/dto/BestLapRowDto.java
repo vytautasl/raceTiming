@@ -13,8 +13,10 @@ public class BestLapRowDto {
     String raceGap;
     String raceGapTotal;
     Double lastLap;
+    String lastLapStr;
     String racePos;
     Integer deviceId;
+    Double lastCheckpointTime;
 
     public Integer getPosition() {
         return position;
@@ -126,5 +128,21 @@ public class BestLapRowDto {
 
     public void setDeviceId(Integer deviceId) {
         this.deviceId = deviceId;
+    }
+
+    public String getLastLapStr() {
+        return lastLapStr;
+    }
+
+    public void setLastLapStr(String lastLapStr) {
+        this.lastLapStr = lastLapStr;
+    }
+
+    public Double getLastCheckpointTime() {
+        return lastCheckpointTime;
+    }
+
+    public void setLastCheckpointTime(Double lastCheckpointTime) {
+        this.lastCheckpointTime = lastCheckpointTime;
     }
 }

@@ -10,6 +10,8 @@ import java.util.List;
 @Entity
 @Table(name="race_session")
 public class RaceSession {
+    public static final Integer TYPE_PRACTICE = 1;
+    public static final Integer TYPE_RACE = 2;
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
@@ -35,6 +37,9 @@ public class RaceSession {
 
     @Column(nullable=true, unique=false)
     private boolean active;
+
+    @Column(nullable=true, unique=false)
+    private Integer sessionType;
 
     public Integer getId() {
         return id;
@@ -98,5 +103,13 @@ public class RaceSession {
 
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
+    }
+
+    public Integer getSessionType() {
+        return sessionType;
+    }
+
+    public void setSessionType(Integer sessionType) {
+        this.sessionType = sessionType;
     }
 }

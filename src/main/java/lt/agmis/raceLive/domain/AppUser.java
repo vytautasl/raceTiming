@@ -1,10 +1,6 @@
 package lt.agmis.raceLive.domain;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Table(name="app_user")
@@ -24,6 +20,27 @@ public class AppUser {
 
     @Column(nullable=true, unique=false)
     private String name;
+
+    @Column(nullable=true, unique=true)
+    private String publicId;
+
+    @Column(nullable=true, unique=false)
+    private boolean host;
+
+    @Column(nullable=true, unique=false)
+    private String fbId;
+
+    @Column(nullable=true, unique=true)
+    private String profilePhotoLocation;
+
+    @Column(nullable=true, unique=true)
+    private String logoPhotoLocation;
+
+    @Column(nullable=true, unique=true)
+    private String trackSchemePhotoLocation;
+
+    @Column(nullable=true, unique=false)
+    private boolean confirmed;
 
     public Integer getId() {
         return id;
@@ -63,5 +80,61 @@ public class AppUser {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getPublicId() {
+        return publicId;
+    }
+
+    public void setPublicId(String publicId) {
+        this.publicId = publicId;
+    }
+
+    public boolean isHost() {
+        return host;
+    }
+
+    public void setHost(boolean host) {
+        this.host = host;
+    }
+
+    public String getFbId() {
+        return fbId;
+    }
+
+    public void setFbId(String fbId) {
+        this.fbId = fbId;
+    }
+
+    public String getProfilePhotoLocation() {
+        return profilePhotoLocation;
+    }
+
+    public void setProfilePhotoLocation(String profilePhotoLocation) {
+        this.profilePhotoLocation = profilePhotoLocation;
+    }
+
+    public String getLogoPhotoLocation() {
+        return logoPhotoLocation;
+    }
+
+    public void setLogoPhotoLocation(String logoPhotoLocation) {
+        this.logoPhotoLocation = logoPhotoLocation;
+    }
+
+    public String getTrackSchemePhotoLocation() {
+        return trackSchemePhotoLocation;
+    }
+
+    public void setTrackSchemePhotoLocation(String trackSchemePhotoLocation) {
+        this.trackSchemePhotoLocation = trackSchemePhotoLocation;
+    }
+
+    public boolean isConfirmed() {
+        return confirmed;
+    }
+
+    public void setConfirmed(boolean confirmed) {
+        this.confirmed = confirmed;
     }
 }

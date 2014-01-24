@@ -3,13 +3,11 @@ package lt.agmis.raceLive.restcontroller;
 import lt.agmis.raceLive.domain.AppUser;
 import lt.agmis.raceLive.domain.Device;
 import lt.agmis.raceLive.dto.CreateResult;
+import lt.agmis.raceLive.dto.PublicUsernamesDto;
 import lt.agmis.raceLive.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
@@ -34,9 +32,9 @@ public class UserController implements Serializable {
 
     @RequestMapping(value = "/login", produces = {"application/json"}, method = RequestMethod.POST)
     @ResponseBody
-    public CreateResult login(@RequestBody AppUser appUser, HttpServletRequest request, HttpServletResponse response) {
-        CreateResult result = userService.login(appUser);
-        if(result.isSuccess())
+    public AppUser login(@RequestBody AppUser appUser, HttpServletRequest request, HttpServletResponse response) {
+        AppUser result = userService.login(appUser);
+        if(result!=null)
         {
             request.getSession().setAttribute("appUserId", result.getId());
         }
@@ -55,7 +53,22 @@ public class UserController implements Serializable {
             appUser = new AppUser();
             appUser.setId(-1);
         }
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        try
+        {
+            response.getOutputStream().flush();
+        } catch (Exception e)
+        {
+            System.out.println("flush failed");
+        }
         return appUser;
     }
 
+
+    @RequestMapping(value = "/publicIDs/{criteria}", produces = {"application/json"}, method = RequestMethod.GET)
+    @ResponseBody
+    public PublicUsernamesDto info(@PathVariable String criteria)
+    {
+        return userService.getPublicIdsLike(criteria);
+    }
 }

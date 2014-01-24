@@ -1,20 +1,32 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" xmlns:ui="http://java.sun.com/jsf/facelets">
-<h:head />
+<h:head>
+</h:head>
 <body>
-<h:form id="generalForm" style="width:50%">
-<p:panel header="New event">
-    <p:panelGrid columns="2">
-        <p:outputLabel>Event name</p:outputLabel>
-        <p:inputText id="eventName" value="#{eventBean.name}"/>
+    <p:layout fullPage="true">
+        <p:layoutUnit position="west" size="250">
+            <ui:include src="menu.xhtml"/>
+        </p:layoutUnit>
 
-        <h:outputText value="Begins at" />
-        <p:calendar id="eventBeginDate" value="#{eventBean.beginDate}" timeZone="GMT+2" pattern="yyyy-MM-dd HH:mm" />
+        <p:layoutUnit position="center">
+            <h:form id="generalForm" style="width:50%">
+                <p:panel header="New event">
+                    <p:panelGrid columns="2">
+                        <p:outputLabel>Event name</p:outputLabel>
+                        <p:inputText id="eventName" value="#{eventBean.name}"/>
 
-        <h:outputText value="Ends at" />
-        <p:calendar id="eventEndDate" value="#{eventBean.endDate}" timeZone="GMT+2" pattern="yyyy-MM-dd HH:mm" />
-    </p:panelGrid>
-    <p:commandButton update="growl" actionListener="#{eventBean.add}" value="Save" ajax="false"></p:commandButton>
-</p:panel>
-</h:form>
+                        <h:outputText value="Begins at" />
+                        <p:calendar id="eventBeginDate" value="#{eventBean.beginDate}" timeZone="GMT+2" pattern="yyyy-MM-dd HH:mm" />
+
+                        <h:outputText value="Ends at" />
+                        <p:calendar id="eventEndDate" value="#{eventBean.endDate}" timeZone="GMT+2" pattern="yyyy-MM-dd HH:mm" />
+                    </p:panelGrid>
+                    <p:commandButton update="growl" actionListener="#{eventBean.add}" value="Save" ajax="false"/>
+                </p:panel>
+            </h:form>
+        </p:layoutUnit>
+        <p:layoutUnit position="south">
+            <p:outputLabel value="#{userBean.copyright}"/>
+        </p:layoutUnit>
+    </p:layout>
 </body>
 </html>

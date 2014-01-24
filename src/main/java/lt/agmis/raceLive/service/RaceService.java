@@ -14,4 +14,10 @@ public interface RaceService {
     RaceSession getSession(Integer sessionId);
     ParticipantsDto getParticipants(Integer sessionId);
     void setParticipants(Integer sessionId, ParticipantsDto participantsDto);
+
+    RaceSession getActiveSession(AppUser appUser);
+
+    RaceEventListDto getMyEvents(Integer userId);
+
+    RaceEvent getEvent(Integer id);
 }

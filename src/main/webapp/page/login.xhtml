@@ -6,12 +6,13 @@
     <p:panel header="Login">
         <p:panelGrid columns="2">
             <p:outputLabel>Username:</p:outputLabel>
-            <p:inputText id="usr" value="#{userBean.userName}" label="User Name" required="true"/>
+            <p:inputText id="usr" value="#{userBean.userName}" label="User Name"/>
 
             <p:outputLabel>Password:</p:outputLabel>
-            <p:password id="pwd" value="#{userBean.userPass}" label="Password" required="true"/>
+            <p:password id="pwd" value="#{userBean.userPass}" label="Password"/>
         </p:panelGrid>
-        <p:commandButton update="growl" actionListener="#{userBean.login}" value="Login" ajax="false"></p:commandButton>
+        <p:commandButton update="growl" actionListener="#{userBean.login}" value="Login" ajax="false"/>
+        <p:commandButton actionListener="#{navigationBean.signup}" value="Sign up" ajax="false"/>
     </p:panel>
 </h:form>
 </body>

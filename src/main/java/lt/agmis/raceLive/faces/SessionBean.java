@@ -29,6 +29,7 @@ public class SessionBean {
     List<RaceSession> raceSessionList;
     boolean active;
     Integer eventId;
+    Integer sessionType;
 
     public String getName() {
         return name;
@@ -70,8 +71,9 @@ public class SessionBean {
         raceSession.setExecutionDate(getExecutionDate());
         raceSession.setLapLimit(getLapLimit());
         raceSession.setTimeLimit(getTimeLimit());
-        raceSession.setActive(false);
+        raceSession.setActive(isActive());
         raceSession.setEventId(eventId);
+        raceSession.setSessionType(getSessionType());
         CreateResult result = (CreateResult)CallUtils.postCall("session/add", raceSession, CreateResult.class, new HashMap());
         refreshSessionList();
         Messages.addMessage(result);
@@ -142,5 +144,38 @@ public class SessionBean {
 
     public void setEventId(Integer eventId) {
         this.eventId = eventId;
+    }
+
+    public void showResults(Integer sessionId)
+    {
+        try {
+            Messages.setSessionAttribute("race-session-id", sessionId);
+            RaceSession rsResult = (RaceSession)CallUtils.getCall("session/getById/"+sessionId, RaceSession.class, new HashMap());
+            Messages.setSessionAttribute("race-session", rsResult);
+            FacesContext.getCurrentInstance().getExternalContext().redirect("results.xhtml");
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
+
+
+    public void showMyResults(Integer sessionId)
+    {
+        try {
+            Messages.setSessionAttribute("race-session-id", sessionId);
+            RaceSession rsResult = (RaceSession)CallUtils.getCall("session/getById/"+sessionId, RaceSession.class, new HashMap());
+            Messages.setSessionAttribute("race-session", rsResult);
+            FacesContext.getCurrentInstance().getExternalContext().redirect("myResults.xhtml");
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
+
+    public Integer getSessionType() {
+        return sessionType;
+    }
+
+    public void setSessionType(Integer sessionType) {
+        this.sessionType = sessionType;
     }
 }

@@ -357,5 +357,6 @@
             <artifactId>primefaces</artifactId>
             <version>4.0</version>
         </dependency>
+
     </dependencies>
 </project>

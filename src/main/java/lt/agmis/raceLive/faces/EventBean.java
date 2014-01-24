@@ -23,7 +23,9 @@ public class EventBean {
     Date endDate;
     String name;
     List<RaceEvent> eventList;
+    List<RaceEvent> participatedEventList;
     AppUser owner;
+    AppUser participant;
 
     public Date getBeginDate() {
         return beginDate;
@@ -77,10 +79,12 @@ public class EventBean {
     }
 
     public List<RaceEvent> getEventList() {
-        if (eventList==null)
+        if ((getOwner()==null)||(Messages.getAppUser()==null)||(getOwner().getId()!=Messages.getAppUser().getId()))
         {
             refreshEventList();
+            setOwner(Messages.getAppUser());
         }
+
         return eventList;
     }
 
@@ -106,19 +110,49 @@ public class EventBean {
         }
     }
 
+    public void showMySessions(Integer eventId)
+    {
+        Messages.setSessionAttribute("race-event-id", eventId);
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect("mySessions.xhtml");
+        } catch (IOException e) {
+            System.out.println("Faces context not found");
+        }
+    }
+
     private void refreshEventList() {
         AppUser appUser = Messages.getAppUser();
         RaceEventListDto raceEventListDto = (RaceEventListDto)CallUtils.getCall("event/get/"+appUser.getId(), RaceEventListDto.class, new HashMap());
         eventList = raceEventListDto.getRaceEventList();
     }
 
-    public void showResults(Integer sessionId)
-    {
-        try {
-            Messages.setSessionAttribute("race-session-id", sessionId);
-            FacesContext.getCurrentInstance().getExternalContext().redirect("results.xhtml");
-        } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+    public AppUser getOwner() {
+        return owner;
+    }
+
+    public void setOwner(AppUser owner) {
+        this.owner = owner;
+    }
+
+    public List<RaceEvent> getParticipatedEventList() {
+        if ((getParticipant()==null)||(Messages.getAppUser()==null)||(getParticipant().getId()!=Messages.getAppUser().getId()))
+        {
+            setParticipant(Messages.getAppUser());
+            RaceEventListDto raceEventListDto = (RaceEventListDto)CallUtils.getCall("event/getMy/"+getParticipant().getId(), RaceEventListDto.class, new HashMap());
+            participatedEventList = raceEventListDto.getRaceEventList();
         }
+        return participatedEventList;
+    }
+
+    public void setParticipatedEventList(List<RaceEvent> participatedEventList) {
+        this.participatedEventList = participatedEventList;
+    }
+
+    public AppUser getParticipant() {
+        return participant;
+    }
+
+    public void setParticipant(AppUser participant) {
+        this.participant = participant;
     }
 }

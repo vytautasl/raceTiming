@@ -12,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -58,6 +60,7 @@ public class ResultsServiceImpl implements ResultsService {
     public BestLapsDto getFinalBestLaps(Integer sessionId, Integer selectedLap) {
         List<Checkpoint> checkpointList = checkpointDao.getCheckpoints(sessionId);
         List<SessionUser> sessionUsers = sessionUserDao.getUsersOfSession(sessionId);
+        LinkedHashMap lastCheckpointTime = new LinkedHashMap();
         LinkedHashMap lastLaps = new LinkedHashMap();
         LinkedHashMap bestLaps = new LinkedHashMap();
         LinkedHashMap lapNumber = new LinkedHashMap();
@@ -92,7 +95,7 @@ public class ResultsServiceImpl implements ResultsService {
                 device=currentLapDevice;
                 lap = 0;
             }
-            Double lastLap = (Double)lastLaps.get(checkpoint.getDeviceId());
+            Double lastLap = (Double)lastCheckpointTime.get(checkpoint.getDeviceId());
             if (lastLap==null)
             {
                 lastLap = 0.0;
@@ -113,8 +116,9 @@ public class ResultsServiceImpl implements ResultsService {
                         lapNumber.put(checkpoint.getDeviceId(), lap);
                     }
                 }
+                lastLaps.put(checkpoint.getDeviceId(), checkpoint.getTime()-lastLap);
             }
-            lastLaps.put(checkpoint.getDeviceId(), checkpoint.getTime());
+            lastCheckpointTime.put(checkpoint.getDeviceId(), checkpoint.getTime());
         }
         if (device!=null)
         {
@@ -138,6 +142,7 @@ public class ResultsServiceImpl implements ResultsService {
             bestLapRow.setBestLapInLap((Integer)lapNumber.get(device.getId()));
             bestLapRow.setTotalLaps((Integer)totalLaps.get(device.getId()));
             bestLapRow.setLastLap((Double)lastLaps.values().toArray()[i]);
+            bestLapRow.setLastCheckpointTime((Double)lastCheckpointTime.get(device.getId()));
             bestLapRows.add(bestLapRow);
         }
 
@@ -173,6 +178,7 @@ public class ResultsServiceImpl implements ResultsService {
             iRow.setPosition(i+1);
             Double mins = Math.floor(iRow.getBestLap()/60);
             iRow.setBestLapStr(String.format("%d:%06.3f", mins.intValue(),(iRow.getBestLap()-mins*60)));
+            iRow.setLastLapStr(String.format("%d:%06.3f", mins.intValue(), (iRow.getLastLap() - mins * 60)));
             SessionUser sessionUser = findSessionUserByDeviceId(iRow.getDeviceId(), sessionUsers);
             if (sessionUser!=null)
             {
@@ -183,6 +189,9 @@ public class ResultsServiceImpl implements ResultsService {
         }
 
         bestLapsDto.setBestLapRowDtoList(bestLapRows);
+        bestLapsDto.setSessionName(raceSession.getName());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        bestLapsDto.setUpdateTime(sdf.format(new Date()));
 
         return bestLapsDto;
     }
@@ -204,7 +213,7 @@ public class ResultsServiceImpl implements ResultsService {
                     bestLapRows.set(i, jRow);
                     bestLapRows.set(j, iRow);
                 }
-                if ((iRow.getTotalLaps().compareTo(jRow.getTotalLaps())==0)&&(iRow.getLastLap().compareTo(jRow.getLastLap())<0))
+                if ((iRow.getTotalLaps().compareTo(jRow.getTotalLaps())==0)&&(iRow.getLastCheckpointTime().compareTo(jRow.getLastCheckpointTime())<0))
                 {
                     bestLapRows.set(i, jRow);
                     bestLapRows.set(j, iRow);
@@ -213,20 +222,26 @@ public class ResultsServiceImpl implements ResultsService {
         }
         if (bestLapRows.size()>0)
         {
-            Double lastTime = lastCheckpointOfDevice(checkpointList, bestLapRows.get(0).getDeviceId());
-            Integer lastLap = bestLapRows.get(0).getTotalLaps();
+            Double lastTime = bestLapRows.get(0).getLastCheckpointTime();// lastCheckpointOfDevice(checkpointList, bestLapRows.get(0).getDeviceId());
+            Integer lapCount = bestLapRows.get(0).getTotalLaps();
             Double totalGap = 0.0;
 
             for (int i=0; i<bestLapRows.size(); i++)
             {
                 BestLapRowDto iRow = bestLapRows.get(i);
                 iRow.setRacePos(String.valueOf(i+1));
-                Double raceGap = iRow.getLastLap()*(lastLap-iRow.getTotalLaps())+lastCheckpointOfDevice(checkpointList, iRow.getDeviceId())-lastTime;
-                iRow.setRaceGap("+"+String.format("%06.3f", raceGap));
+                Double raceGap = iRow.getLastLap()*(lapCount-iRow.getTotalLaps())+iRow.getLastCheckpointTime() - lastTime;
+                if (raceGap>=0)
+                {
+                    iRow.setRaceGap("+"+String.format("%06.3f", raceGap));
+                } else {
+                    raceGap = bestLapRows.get(i-1).getLastLap()*(lapCount-iRow.getTotalLaps())+iRow.getLastCheckpointTime() - lastTime;
+                    iRow.setRaceGap("+"+String.format("%06.3f", raceGap));
+                }
                 totalGap += raceGap;
                 iRow.setRaceGapTotal("+"+String.format("%06.3f", totalGap));
-                lastTime = lastCheckpointOfDevice(checkpointList, bestLapRows.get(i).getDeviceId());
-                lastLap = iRow.getTotalLaps();
+                lastTime = iRow.getLastCheckpointTime();
+                lapCount = iRow.getTotalLaps();
                 SessionUser sessionUser = findSessionUserByDeviceId(iRow.getDeviceId(), sessionUsers);
                 if (sessionUser!=null)
                 {

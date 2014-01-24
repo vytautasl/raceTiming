@@ -88,4 +88,20 @@ public class RaceServiceImpl implements RaceService{
         }
     }
 
+    @Override
+    public RaceSession getActiveSession(AppUser appUser) {
+        return raceSessionDao.getActiveRaceSession(appUser);
+    }
+
+    @Override
+    public RaceEventListDto getMyEvents(Integer userId) {
+        AppUser appUser = appUserDao.getInfo(userId);
+        return raceEventDao.getMyRaceEventList(appUser);
+    }
+
+    @Override
+    public RaceEvent getEvent(Integer id) {
+        return raceEventDao.getRaceEvent(id);
+    }
+
 }

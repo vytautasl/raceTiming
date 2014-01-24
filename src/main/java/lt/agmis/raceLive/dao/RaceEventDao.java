@@ -14,4 +14,8 @@ import lt.agmis.raceLive.dto.RaceEventListDto;
 public interface RaceEventDao {
     public RaceEventListDto getRaceEventList(AppUser appUser);
     public Integer saveOrUpdateRaceEvent(RaceEvent raceEvent);
+
+    RaceEventListDto getMyRaceEventList(AppUser appUser);
+
+    RaceEvent getRaceEvent(Integer id);
 }
