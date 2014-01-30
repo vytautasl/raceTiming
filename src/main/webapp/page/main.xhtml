@@ -1,0 +1,31 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+</h:head>
+<body>
+<h:form id="generalForm" style="width:50%" >
+    <p:layout fullPage="true">
+        <p:layoutUnit position="west" size="250">
+            <ui:include src="menu.xhtml"/>
+        </p:layoutUnit>
+
+        <p:layoutUnit position="center">
+            Welcome <p:outputLabel value="#{userBean.publicName}"/>
+            <br/>
+            Credits xxxx...
+            <br/>
+            Rank xxxxx...
+            <br/>
+            Nearest event: LKF Žiemos taurės 5tasis etapas on 2014.01.25
+            <br/>
+            <br/>
+            Currently ongoing 5 events
+            <br/>
+            Currently 254 karts on track
+        </p:layoutUnit>
+        <p:layoutUnit position="south">
+            <p:outputLabel value="#{userBean.copyright}"/>
+        </p:layoutUnit>
+    </p:layout>
+</h:form>
+</body>
+</html>

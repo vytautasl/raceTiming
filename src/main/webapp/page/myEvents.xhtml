@@ -1,0 +1,38 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+</h:head>
+<body>
+<p:layout fullPage="true">
+    <p:layoutUnit position="west" size="250">
+        <ui:include src="menu.xhtml"/>
+    </p:layoutUnit>
+
+    <p:layoutUnit position="center">
+        <h:form id="generalForm" style="width:50%">
+            <p:panel header="Events where you participated in">
+                <p:dataTable id="eventTbl" var="event" value="#{eventBean.participatedEventList}" paginator="true" rows="10" rowKey="#{event.id}" editable="true">
+                    <p:column headerText="Name">
+                        <h:outputText value="#{event.raceName}"/>
+                    </p:column>
+
+                    <p:column headerText="Begin date">
+                            <h:outputText value="#{event.beginDate}"><f:convertDateTime  timeZone="GMT+2" pattern="yyyy-MM-dd HH:mm" /></h:outputText>
+                    </p:column>
+
+                    <p:column headerText="End date">
+                        <h:outputText value="#{event.endDate}"><f:convertDateTime  timeZone="GMT+2" pattern="yyyy-MM-dd HH:mm" /></h:outputText>
+                    </p:column>
+
+                    <p:column headerText="Sessions">
+                        <p:commandButton id="sessionsLink" icon="ui-icon-script" action="#{eventBean.showMySessions(event.id)}" ajax="false" update="sessionTbl" />
+                    </p:column>
+                </p:dataTable>
+            </p:panel>
+        </h:form>
+    </p:layoutUnit>
+    <p:layoutUnit position="south">
+        <p:outputLabel value="#{userBean.copyright}"/>
+    </p:layoutUnit>
+</p:layout>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" xmlns:ui="http://java.sun.com/jsf/facelets">
+<h:head>
+</h:head>
+<body>
+<h:form id="generalForm" style="width:50%" >
+    <p:layout fullPage="true" >
+
+        <p:layoutUnit id="top" position="north" size="100" >north</p:layoutUnit>
+
+        <p:layoutUnit id="bottom" position="south" size="100" >south</p:layoutUnit>
+
+        <p:layoutUnit id="left" position="west" size="100">west</p:layoutUnit>
+
+        <p:layoutUnit id="right" position="east" size="100">east</p:layoutUnit>
+
+        <p:layoutUnit id="center" position="center" >
+            <p:layout>
+                <p:layoutUnit id="inner_north" position="north" size="100">inner north</p:layoutUnit>
+                <p:layoutUnit id="inner_south" position="south" size="100">inner south</p:layoutUnit>
+                <p:layoutUnit id="inner_west" position="west" size="100">inner west</p:layoutUnit>
+                <p:layoutUnit id="inner_east" position="east" size="100">inner east</p:layoutUnit>
+                <p:layoutUnit id="inner_center" position="center" >inner center</p:layoutUnit>
+            </p:layout>
+        </p:layoutUnit>
+
+    </p:layout>
+</h:form>
+</body>
+</html>
