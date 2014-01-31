@@ -5,16 +5,19 @@ import lt.agmis.raceLive.dto.CreateResult;
 import lt.agmis.raceLive.faces.utils.CallUtils;
 import lt.agmis.raceLive.faces.utils.Messages;
 import org.primefaces.event.FileUploadEvent;
+import org.primefaces.event.map.OverlaySelectEvent;
 import org.primefaces.model.map.DefaultMapModel;
 import org.primefaces.model.map.LatLng;
 import org.primefaces.model.map.MapModel;
 import org.primefaces.model.map.Marker;
 
 import javax.annotation.PostConstruct;
+import javax.faces.application.Application;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.el.ValueBinding;
 import javax.faces.event.ActionEvent;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
@@ -49,6 +52,12 @@ public class UserBean {
     private String newCountry;
     private String newCity;
     private String newAddress;
+
+
+    public void onMarkerSelect(OverlaySelectEvent event) {
+        Marker marker = (Marker) event.getOverlay();
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Marker Selected", marker.getTitle()));
+    }
 
     public UserBean()
     {

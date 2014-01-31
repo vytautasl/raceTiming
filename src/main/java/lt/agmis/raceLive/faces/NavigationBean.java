@@ -67,4 +67,12 @@ public class NavigationBean {
         }
     }
 
+    public void browseEvents()
+    {
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect("browseEvents.xhtml");
+        } catch (IOException e) {
+            System.out.println("Faces context not found");
+        }
+    }
 }

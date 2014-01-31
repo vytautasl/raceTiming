@@ -7,7 +7,12 @@ import lt.agmis.raceLive.dto.RaceEventListDto;
 import lt.agmis.raceLive.faces.utils.CallUtils;
 import lt.agmis.raceLive.faces.utils.Messages;
 import org.primefaces.event.RowEditEvent;
+import org.primefaces.event.map.OverlaySelectEvent;
+import org.primefaces.model.map.DefaultMapModel;
+import org.primefaces.model.map.MapModel;
+import org.primefaces.model.map.Marker;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
@@ -26,6 +31,30 @@ public class EventBean {
     List<RaceEvent> participatedEventList;
     AppUser owner;
     AppUser participant;
+    private int distance;
+    double userCenterLat;
+    double userCenterLng;
+
+    public void refreshMap()
+    {
+
+    }
+
+    public double getUserCenterLat() {
+        return userCenterLat;
+    }
+
+    public void setUserCenterLat(double userCenterLat) {
+        this.userCenterLat = userCenterLat;
+    }
+
+    public double getUserCenterLng() {
+        return userCenterLng;
+    }
+
+    public void setUserCenterLng(double userCenterLng) {
+        this.userCenterLng = userCenterLng;
+    }
 
     public Date getBeginDate() {
         return beginDate;
@@ -154,5 +183,13 @@ public class EventBean {
 
     public void setParticipant(AppUser participant) {
         this.participant = participant;
+    }
+
+    public int getDistance() {
+        return distance;
+    }
+
+    public void setDistance(int distance) {
+        this.distance = distance;
     }
 }
