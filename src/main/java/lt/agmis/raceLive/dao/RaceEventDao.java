@@ -18,4 +18,6 @@ public interface RaceEventDao {
     RaceEventListDto getMyRaceEventList(AppUser appUser);
 
     RaceEvent getRaceEvent(Integer id);
+
+    RaceEventListDto getRaceEventListInDays(Integer days);
 }

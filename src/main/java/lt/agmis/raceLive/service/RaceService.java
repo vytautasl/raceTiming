@@ -20,4 +20,6 @@ public interface RaceService {
     RaceEventListDto getMyEvents(Integer userId);
 
     RaceEvent getEvent(Integer id);
+
+    RaceEventListDto getEventsInDays(Integer days);
 }

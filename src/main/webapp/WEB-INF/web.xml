@@ -18,6 +18,10 @@
         <param-value>pepper-grinder</param-value>
     </context-param>
     <context-param>
+        <param-name>primefaces.UPLOADER</param-name>
+        <param-value>auto</param-value>
+    </context-param>
+    <context-param>
         <param-name>primefaces.PUBLIC_CAPTCHA_KEY</param-name>
         <param-value>6Ld7pMESAAAAAHd1VihJkqPUXAJVwU3Cghc8fzrq</param-value>
     </context-param>

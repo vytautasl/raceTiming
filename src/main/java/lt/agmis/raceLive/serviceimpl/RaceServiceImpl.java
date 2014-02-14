@@ -104,4 +104,9 @@ public class RaceServiceImpl implements RaceService{
         return raceEventDao.getRaceEvent(id);
     }
 
+    @Override
+    public RaceEventListDto getEventsInDays(Integer days) {
+        return raceEventDao.getRaceEventListInDays(days);
+    }
+
 }

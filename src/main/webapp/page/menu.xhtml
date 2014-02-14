@@ -1,8 +1,11 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:p="http://primefaces.org/ui" xmlns:ui="http://java.sun.com/jsf/facelets">
+    <div id="fb-root"></div>
+    <h:inputHidden id="fbId" value="#{userBean.fbAppId}"/>
+    <script src="../js/fb.js"></script>
     <p:commandButton value="Home" style="width:235px;height:50px" actionListener="#{navigationBean.home}" /><br/><br/>
     <p:commandButton value="Event scheduler" style="width:235px;height:50px" actionListener="#{navigationBean.events}" /><br/><br/>
     <p:commandButton value="My Events" style="width:235px;height:50px" actionListener="#{navigationBean.myEvents}"/><br/><br/>
     <p:commandButton value="Browse for events" style="width:235px;height:50px" actionListener="#{navigationBean.browseEvents}"/><br/><br/>
-    <p:commandButton value="Profile" style="width:235px;height:50px" actionListener="#{navigationBean.profile}"/><br/><br/>
+    <p:commandButton value="Profile" style="width:235px;height:50px" actionListener="#{userBean.loadProfile}"/><br/><br/>
     <p:commandButton value="Logout" style="width:235px;height:50px" actionListener="#{navigationBean.logout}"/><br/><br/>
 </ui:composition>

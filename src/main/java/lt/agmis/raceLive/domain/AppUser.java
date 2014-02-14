@@ -42,6 +42,12 @@ public class AppUser {
     @Column(nullable=true, unique=false)
     private boolean confirmed;
 
+    @Column(nullable=true, unique=false)
+    private Double hostLat;
+
+    @Column(nullable=true, unique=false)
+    private Double hostLng;
+
     public Integer getId() {
         return id;
     }
@@ -136,5 +142,21 @@ public class AppUser {
 
     public void setConfirmed(boolean confirmed) {
         this.confirmed = confirmed;
+    }
+
+    public Double getHostLat() {
+        return hostLat;
+    }
+
+    public void setHostLat(Double hostLat) {
+        this.hostLat = hostLat;
+    }
+
+    public Double getHostLng() {
+        return hostLng;
+    }
+
+    public void setHostLng(Double hostLng) {
+        this.hostLng = hostLng;
     }
 }

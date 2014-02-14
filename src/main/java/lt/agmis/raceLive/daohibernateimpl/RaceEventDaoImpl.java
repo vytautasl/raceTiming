@@ -39,4 +39,11 @@ public class RaceEventDaoImpl implements RaceEventDao {
     public RaceEvent getRaceEvent(Integer id) {
         return (RaceEvent)sessionFactory.getCurrentSession().createQuery("from RaceEvent re where re.id="+id).uniqueResult();
     }
+
+    @Override
+    public RaceEventListDto getRaceEventListInDays(Integer days) {
+        RaceEventListDto raceEventListDto = new RaceEventListDto();
+        raceEventListDto.setRaceEventList((List<RaceEvent>)sessionFactory.getCurrentSession().createQuery("from RaceEvent re where dateDiff(beginDate , curdate())>=0 and dateDiff(beginDate , curdate())<="+days).list());
+        return raceEventListDto;
+    }
 }

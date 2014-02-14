@@ -30,4 +30,12 @@ public class CallUtils {
         ResponseEntity schemaListEntity = template.postForEntity(callPath+url, postingObject, sampleClass, params);
         return schemaListEntity.getBody();
     }
+
+
+    public static Object fbCall(String url)
+    {
+        RestTemplate template = new RestTemplate();
+        ResponseEntity schemaListEntity = template.getForEntity(url, String.class, new HashMap());
+        return schemaListEntity.getBody();
+    }
 }

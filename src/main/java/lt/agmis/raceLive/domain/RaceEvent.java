@@ -24,6 +24,39 @@ public class RaceEvent {
     @Column(nullable=true, unique=false)
     private Date endDate;
 
+    @Column(nullable=true, unique=false)
+    private Integer host;
+
+    @Column(nullable=true, unique=false)
+    private Double lng;
+
+    @Column(nullable=true, unique=false)
+    private Double lat;
+
+    public Double getLng() {
+        return lng;
+    }
+
+    public void setLng(Double lng) {
+        this.lng = lng;
+    }
+
+    public Double getLat() {
+        return lat;
+    }
+
+    public void setLat(Double lat) {
+        this.lat = lat;
+    }
+
+    public Integer getHost() {
+        return host;
+    }
+
+    public void setHost(Integer host) {
+        this.host = host;
+    }
+
     public Integer getRaceOwner() {
         return raceOwner;
     }

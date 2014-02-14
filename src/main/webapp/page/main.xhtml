@@ -2,7 +2,7 @@
 <h:head>
 </h:head>
 <body>
-<h:form id="generalForm" style="width:50%" >
+<h:form id="generalForm" style="width:50%">
     <p:layout fullPage="true">
         <p:layoutUnit position="west" size="250">
             <ui:include src="menu.xhtml"/>
@@ -21,6 +21,8 @@
             Currently ongoing 5 events
             <br/>
             Currently 254 karts on track
+            <br/>
+            <p:commandButton value="SAX" action="#{userBean.test}"/>
         </p:layoutUnit>
         <p:layoutUnit position="south">
             <p:outputLabel value="#{userBean.copyright}"/>

@@ -33,6 +33,12 @@ public class EventController implements Serializable {
         return result;
     }
 
+    @RequestMapping(value = "/getInDays/{days}", produces = {"application/json"}, method = RequestMethod.GET)
+    @ResponseBody
+    public RaceEventListDto getEventsByDayRange(@PathVariable Integer days) {
+        return raceService.getEventsInDays(days);
+    }
+
     @RequestMapping(value = "/get/{userId}", produces = {"application/json"}, method = RequestMethod.GET)
     @ResponseBody
     public RaceEventListDto getEvents(@PathVariable Integer userId) {

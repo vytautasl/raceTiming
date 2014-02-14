@@ -4,18 +4,24 @@ import lt.agmis.raceLive.domain.AppUser;
 import lt.agmis.raceLive.dto.CreateResult;
 import lt.agmis.raceLive.faces.utils.CallUtils;
 import lt.agmis.raceLive.faces.utils.Messages;
+import lt.agmis.raceLive.util.SaxMindaugas;
+import lt.agmis.raceLive.util.SaxOrtec;
+import org.primefaces.component.fileupload.FileUploadRenderer;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.map.OverlaySelectEvent;
+import org.primefaces.event.map.PointSelectEvent;
 import org.primefaces.model.map.DefaultMapModel;
 import org.primefaces.model.map.LatLng;
 import org.primefaces.model.map.MapModel;
 import org.primefaces.model.map.Marker;
+import org.xml.sax.XMLReader;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.Application;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.el.ValueBinding;
 import javax.faces.event.ActionEvent;
@@ -26,6 +32,9 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -47,12 +56,58 @@ public class UserBean {
     public boolean newHost;
 
     private MapModel emptyModel;
-    private double newLat;
-    private double newLng;
+    private Double newLat=0.0;
+    private Double newLng=0.0;
     private String newCountry;
     private String newCity;
     private String newAddress;
 
+    private Double userCenterLat=0.0;
+    private Double userCenterLng=0.0;
+    String fbAppId="";
+
+    public void test()
+    {
+        try {
+            SAXParserFactory spf = SAXParserFactory.newInstance();
+            spf.setNamespaceAware(true);
+            SAXParser saxParser = spf.newSAXParser();
+            XMLReader xmlReader = saxParser.getXMLReader();
+            File outputFile1 = new File("C:\\temp\\output1.xml");
+            xmlReader.setContentHandler(new SaxMindaugas(outputFile1));
+            //xmlReader.parse(OrtecSaxParserUtil.convertToFileURL(routeFileName));
+            xmlReader.parse("C:\\temp\\input.xml");
+        } catch (Exception e)
+        {
+
+        }
+    }
+
+    public String getFbAppId() {
+        HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession( true );
+        AppUser appUser = (AppUser)session.getAttribute("appUser");
+        return appUser.getFbId();
+    }
+
+    public void setFbAppId(String fbAppId) {
+        this.fbAppId = fbAppId;
+    }
+
+    public Double getUserCenterLat() {
+        return userCenterLat;
+    }
+
+    public void setUserCenterLat(Double userCenterLat) {
+        this.userCenterLat = userCenterLat;
+    }
+
+    public Double getUserCenterLng() {
+        return userCenterLng;
+    }
+
+    public void setUserCenterLng(Double userCenterLng) {
+        this.userCenterLng = userCenterLng;
+    }
 
     public void onMarkerSelect(OverlaySelectEvent event) {
         Marker marker = (Marker) event.getOverlay();
@@ -64,9 +119,21 @@ public class UserBean {
         emptyModel = new DefaultMapModel();
     }
 
-    public void addMarker(ActionEvent actionEvent) {
-        Marker marker = new Marker(new LatLng(newLat, newLng), newPublicName);
+    public void addMarker() {
+        if ((newLat!=null)&&(newLng!=null))
+        {
+            Marker marker = new Marker(new LatLng(newLat, newLng), newPublicName);
+            emptyModel.addOverlay(marker);
+        }
+    }
+
+    public void onPointSelect(PointSelectEvent event) {
+        LatLng latlng = event.getLatLng();
+        emptyModel.getMarkers().clear();
+        Marker marker = new Marker(new LatLng(latlng.getLat(), latlng.getLng()));
         emptyModel.addOverlay(marker);
+        setNewLat(latlng.getLat());
+        setNewLng(latlng.getLng());
     }
 
     public String getUserName() {
@@ -225,6 +292,40 @@ public class UserBean {
         FacesContext.getCurrentInstance().addMessage(null, msg);
     }
 
+    public void loadFields()
+    {
+        HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession( true );
+        AppUser appUser = (AppUser)session.getAttribute("appUser");
+        setNewUserName(appUser.getUserName());
+        setNewEmail(appUser.getEmail());
+        setNewFBId(appUser.getFbId());
+        setNewHost(appUser.isHost());
+        setNewPublicId(appUser.getPublicId());
+        setNewPublicName(appUser.getName());
+        setNewLat(appUser.getHostLat());
+        setNewLng(appUser.getHostLng());
+    }
+
+    public void refreshMap()
+    {
+        setNewLat(getUserCenterLat());
+        setNewLng(getUserCenterLng());
+        emptyModel.getMarkers().clear();
+        Marker marker = new Marker(new LatLng(getNewLat(), getNewLng()));
+        emptyModel.addOverlay(marker);
+    }
+
+    public void loadProfile()
+    {
+        loadFields();
+        addMarker();
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect("profile.xhtml");
+        } catch (IOException e) {
+            System.out.println("Faces context not found");
+        }
+    }
+
     public void register()
     {
         if (getNewPassword().equals(getNewRepeatPassword()))
@@ -262,6 +363,53 @@ public class UserBean {
         }
     }
 
+    public void backToLogin()
+    {
+        try {
+            FacesContext.getCurrentInstance().getExternalContext().redirect("login.xhtml");
+        } catch (IOException e) {
+            System.out.println("Faces context not found");
+        }
+    }
+
+    public void updateProfile()
+    {
+        if (getNewPassword().equals(getNewRepeatPassword()))
+        {
+            HttpSession session = (HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession( true );
+            AppUser appUser = (AppUser)session.getAttribute("appUser");
+            appUser.setUserName(getNewUserName());
+            appUser.setUserPass(getNewPassword());
+            appUser.setEmail(getNewEmail());
+            appUser.setConfirmed(false);
+            appUser.setFbId(getNewFBId());
+            appUser.setHost(isNewHost());
+            appUser.setPublicId(getNewPublicId());
+            appUser.setName(getNewPublicName());
+            appUser.setHostLat(getNewLat());
+            appUser.setHostLng(getNewLng());
+            CreateResult result = (CreateResult)CallUtils.postCall("user/create", appUser, CreateResult.class, new HashMap());
+            if (result.isSuccess())
+            {
+                try {
+                    //sendHTMLEmail(appUser.getEmail(), "Signup comfirmation", "<html><body><b>Hello</b></body></html>");
+                    AppUser userLoggedIn = (AppUser)CallUtils.postCall("user/login", appUser, AppUser.class, new HashMap());
+                    if (userLoggedIn!=null)
+                    {
+                        collectDataOfUser(userLoggedIn);
+                        session.setAttribute("appUser", userLoggedIn);
+                        try {
+                            FacesContext.getCurrentInstance().getExternalContext().redirect("main.xhtml");
+                        } catch (IOException e) {
+                            System.out.println("Faces context not found");
+                        }
+                    }
+                } catch (Exception e) {
+                    System.out.println("Faces context not found. " + e.getMessage());
+                }
+            }
+        }
+    }
 
     public void sendHTMLEmail(String to, String subject, String html) throws Exception {
 
@@ -291,19 +439,21 @@ public class UserBean {
         this.emptyModel = emptyModel;
     }
 
-    public double getNewLat() {
+    public Double getNewLat() {
+        if ((newLat==null)||(newLat==0.0)) newLat=52.5;
         return newLat;
     }
 
-    public void setNewLat(double newLat) {
+    public void setNewLat(Double newLat) {
         this.newLat = newLat;
     }
 
-    public double getNewLng() {
+    public Double getNewLng() {
+        if ((newLng==null)||(newLng==0.0)) newLng=13.5;
         return newLng;
     }
 
-    public void setNewLng(double newLng) {
+    public void setNewLng(Double newLng) {
         this.newLng = newLng;
     }
 
