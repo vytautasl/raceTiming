@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="raceTiming:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="raceLive.war">
+      <element id="artifact" artifact-name="raceTiming:war exploded" />
+    </root>
+  </artifact>
+</component>

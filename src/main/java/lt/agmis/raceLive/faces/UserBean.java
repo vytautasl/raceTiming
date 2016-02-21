@@ -4,8 +4,6 @@ import lt.agmis.raceLive.domain.AppUser;
 import lt.agmis.raceLive.dto.CreateResult;
 import lt.agmis.raceLive.faces.utils.CallUtils;
 import lt.agmis.raceLive.faces.utils.Messages;
-import lt.agmis.raceLive.util.SaxMindaugas;
-import lt.agmis.raceLive.util.SaxOrtec;
 import org.primefaces.component.fileupload.FileUploadRenderer;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.event.map.OverlaySelectEvent;
@@ -70,13 +68,13 @@ public class UserBean {
     {
         try {
             SAXParserFactory spf = SAXParserFactory.newInstance();
-            spf.setNamespaceAware(true);
-            SAXParser saxParser = spf.newSAXParser();
-            XMLReader xmlReader = saxParser.getXMLReader();
-            File outputFile1 = new File("C:\\temp\\output1.xml");
-            xmlReader.setContentHandler(new SaxMindaugas(outputFile1));
-            //xmlReader.parse(OrtecSaxParserUtil.convertToFileURL(routeFileName));
-            xmlReader.parse("C:\\temp\\input.xml");
+//            spf.setNamespaceAware(true);
+//            SAXParser saxParser = spf.newSAXParser();
+//            XMLReader xmlReader = saxParser.getXMLReader();
+//            File outputFile1 = new File("C:\\temp\\output1.xml");
+//            xmlReader.setContentHandler(new SaxMindaugas(outputFile1));
+//            //xmlReader.parse(OrtecSaxParserUtil.convertToFileURL(routeFileName));
+//            xmlReader.parse("C:\\temp\\input.xml");
         } catch (Exception e)
         {
 
