@@ -5,10 +5,7 @@ import lt.agmis.raceLive.domain.Checkpoint;
 import lt.agmis.raceLive.domain.Device;
 import lt.agmis.raceLive.dto.CreateResult;
 import lt.agmis.raceLive.dto.RawDataDto;
-import lt.agmis.raceLive.service.DeviceService;
-import lt.agmis.raceLive.service.RaceService;
-import lt.agmis.raceLive.service.RawParseService;
-import lt.agmis.raceLive.service.UserService;
+import lt.agmis.raceLive.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -31,6 +28,9 @@ public class CheckpointController implements Serializable {
 
     @Autowired
     RawParseService rawParseService;
+
+    @Autowired
+    CheckpointService checkpointService;
 
     @RequestMapping(value = "/add/{serialNumber}/{time}", produces = {"application/json"}, method = RequestMethod.GET)
     @ResponseBody
@@ -64,6 +64,7 @@ public class CheckpointController implements Serializable {
             device.setDeviceOwner(-1);
             deviceService.saveDevice(device);
         }
+        checkpointService.createCheckpoint(device, raw.getRaw(), "device serial here");
         rawParseService.saveRaw(device, time, raw.getRaw());
         CreateResult result = new CreateResult();
         result.setSuccess(true);
