@@ -27,10 +27,10 @@ public class CheckpointServiceImpl implements CheckpointService {
     DeviceDao deviceDao;
 
     @Override
-    public void createCheckpoint(Device device, String rawData, String decoderType) {
+    public void createCheckpoint(Device device, String rawData, String decoderSerialNumber) {
         ParserFactory parserFactory = new ParserFactory();
 
-        RawDecoderDataParser parser = parserFactory.CreateParser(decoderType);
+        RawDecoderDataParser parser = parserFactory.CreateParser(decoderSerialNumber);
         ParsedDecoderData parsedDecoderData = parser.parseData(rawData);
 
         raceService.addCheckpoint(device, parsedDecoderData.getTime());

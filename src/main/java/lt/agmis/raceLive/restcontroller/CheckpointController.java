@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
+import javax.validation.constraints.Null;
 import java.io.Serializable;
 import java.util.List;
 
@@ -38,12 +39,7 @@ public class CheckpointController implements Serializable {
         Device device = deviceService.getDevice(serialNumber);
         if (device==null)
         {
-            device = new Device();
-            device.setSerialNumber(serialNumber);
-            device.setDefaultNumber("unrecKart#" + serialNumber);
-            device.setDefaultName("unrecKartName" + serialNumber);
-            device.setDeviceOwner(-1);
-            deviceService.saveDevice(device);
+            device = deviceService.createDefaultDevice(serialNumber);
         }
         raceService.addCheckpoint(device, time);
         CreateResult result = new CreateResult();
@@ -57,12 +53,7 @@ public class CheckpointController implements Serializable {
         Device device = deviceService.getDevice(serialNumber);
         if (device==null)
         {
-            device = new Device();
-            device.setSerialNumber(serialNumber);
-            device.setDefaultNumber("unrecKart#" + serialNumber);
-            device.setDefaultName("unrecKartName" + serialNumber);
-            device.setDeviceOwner(-1);
-            deviceService.saveDevice(device);
+            device = deviceService.createDefaultDevice(serialNumber);
         }
         checkpointService.createCheckpoint(device, raw.getRaw(), "device serial here");
         rawParseService.saveRaw(device, time, raw.getRaw());

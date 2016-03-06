@@ -36,4 +36,17 @@ public class DeviceServiceImpl implements DeviceService {
     public Device getDevice(String serialNumber) {
         return deviceDao.getDevice(serialNumber);
     }
+
+    @Override
+    public Device createDefaultDevice(String serialNumber) {
+        Device device = new Device();
+        device.setSerialNumber(serialNumber);
+        device.setDefaultNumber("unrecKart#" + serialNumber);
+        device.setDefaultName("unrecKartName" + serialNumber);
+        device.setDeviceOwner(-1);
+
+        saveDevice(device);
+
+        return device;
+    }
 }

@@ -11,4 +11,5 @@ public interface DeviceService {
     public List<Device> getDevices(RaceSession raceSession);
     public Integer saveDevice(Device device);
     Device getDevice(String serialNumber);
+    Device createDefaultDevice(String serialNumber);
 }
