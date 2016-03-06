@@ -29,7 +29,6 @@ public class CheckpointServiceImpl implements CheckpointService {
     @Override
     public void createCheckpoint(Device device, String rawData, String decoderSerialNumber) {
         ParserFactory parserFactory = new ParserFactory();
-
         RawDecoderDataParser parser = parserFactory.CreateParser(decoderSerialNumber);
         ParsedDecoderData parsedDecoderData = parser.parseData(rawData);
 
